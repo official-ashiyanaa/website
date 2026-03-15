@@ -7,6 +7,7 @@
     <title>Ashiyanaa Constructions | Your Vision. Our Expertise. Perfect Execution.</title>
     <meta name="description"
         content="Ashiyanaa Constructions — Premium construction, architectural planning, loan assistance, and property development in Dibrugarh & Nagaon, Assam.">
+    <link rel="icon" type="image/png" href="logo.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link
         href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400&family=DM+Sans:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,700;1,400&display=swap"
@@ -2555,54 +2556,71 @@
             </div>
             <div class="contact-grid fade-in">
                 <div class="contact-info">
+
                     <div class="contact-item">
-                        <div class="contact-icon">📍</div>
+                        <div class="contact-icon">🏢</div>
                         <div>
-                            <h4>Office</h4>
-                            <p>Khanikar Charali, Dibrugarh – 786001</p>
+                            <h4>Branch Office</h4>
+                            <p>AT Road, Itachali, Nagaon – 782003</p>
                         </div>
                     </div>
                     <div class="contact-item">
                         <div class="contact-icon">🏢</div>
                         <div>
-                            <h4>Head Office</h4>
-                            <p>AT Road, Itachali, Nagaon – 782003</p>
+                            <h4>Branch Office</h4>
+                            <p>Khanikar Charali, Dibrugarh – 786001</p>
                         </div>
                     </div>
                     <div class="contact-item">
                         <div class="contact-icon">📞</div>
                         <div>
                             <h4>Phone</h4>
-                            <p><a href="tel:+918822583969">+91 88225 83969</a><br><a href="tel:+917896229906">+91 78962
-                                    29906</a><br><a href="tel:+919864720644">+91 98647 20644</a><br><a
-                                    href="tel:+917099762722">+91 70997 62722</a></p>
+                            <p>
+                                <a href="tel:+919435065225">+91 94350 65225</a><br>
+                                <a href="tel:+919435009017">+91 94350 09017</a><br>
+                                <a href="tel:+918474805690">+91 84748 05690</a>
+                            </p>
                         </div>
                     </div>
                 </div>
-                <div class="contact-form">
+                <form class="contact-form" id="enquiry-form">
                     <div class="form-row">
-                        <div class="form-group"><label>Full Name</label><input type="text" placeholder="Your name">
+                        <div class="form-group">
+                            <label for="enquiry-name">Full Name</label>
+                            <input type="text" id="enquiry-name" name="name" placeholder="Your name" required>
                         </div>
-                        <div class="form-group"><label>Phone Number</label><input type="tel"
-                                placeholder="+91 XXXXX XXXXX"></div>
+                        <div class="form-group">
+                            <label for="enquiry-phone">Phone Number</label>
+                            <input type="tel" id="enquiry-phone" name="phone" placeholder="+91 XXXXX XXXXX" required>
+                        </div>
                     </div>
-                    <div class="form-group"><label>Email Address</label><input type="email"
-                            placeholder="your@email.com"></div>
-                    <div class="form-group"><label>Interested In</label><select>
+                    <div class="form-group">
+                        <label for="enquiry-email">Email Address</label>
+                        <input type="email" id="enquiry-email" name="email" placeholder="your@email.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="enquiry-project">Interested In</label>
+                        <select id="enquiry-project" name="project" required>
                             <option value="">Select a project...</option>
-                            <option>Ashiyanaa Residency (Dibrugarh)</option>
-                            <option>Ashiyanaa Grand (Nagaon)</option>
-                            <option>Ashiyanaa Skyline (Upcoming)</option>
-                            <option>Construction Services</option>
-                            <option>Other Enquiry</option>
-                        </select></div>
-                    <div class="form-group"><label>Message</label><textarea
-                            placeholder="Tell us about your requirements..."></textarea></div>
-                    <button class="btn-primary" style="width:100%;font-size:14px;" onclick="handleSubmit()">Send Enquiry
-                        →</button>
+                            <option value="Ashiyanaa Residency (Dibrugarh)">Ashiyanaa Residency (Dibrugarh)</option>
+                            <option value="Ashiyanaa Grand (Nagaon)">Ashiyanaa Grand (Nagaon)</option>
+                            <option value="Ashiyanaa Skyline (Upcoming)">Ashiyanaa Skyline (Upcoming)</option>
+                            <option value="Construction Services">Construction Services</option>
+                            <option value="Other Enquiry">Other Enquiry</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="enquiry-message">Message</label>
+                        <textarea id="enquiry-message" name="message" placeholder="Tell us about your requirements..."
+                            required></textarea>
+                    </div>
+                    <button class="btn-primary" style="width:100%;font-size:14px;" type="submit">Send Enquiry →</button>
+                    <p id="enquiry-status"
+                        style="font-size:12px;color:var(--muted);text-align:center;min-height:16px;margin-top:4px;">
+                    </p>
                     <p style="font-size:12px;color:var(--muted);text-align:center;">By submitting, you agree to be
                         contacted by our team.</p>
-                </div>
+                </form>
             </div>
         </div>
     </section>
@@ -2626,13 +2644,28 @@
         // HAMBURGER
         const hamburger = document.getElementById('hamburger');
         const navLinks = document.getElementById('navLinks');
+
+        function setBodyLock(locked) {
+            if (locked) {
+                document.body.dataset.scrollLock = 'true';
+                document.body.style.overflow = 'hidden';
+            } else {
+                delete document.body.dataset.scrollLock;
+                document.body.style.overflow = '';
+            }
+        }
+
         hamburger.addEventListener('click', () => {
+            const isOpening = !navLinks.classList.contains('open');
             hamburger.classList.toggle('active');
             navLinks.classList.toggle('open');
+            setBodyLock(isOpening);
         });
+
         navLinks.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
             hamburger.classList.remove('active');
             navLinks.classList.remove('open');
+            setBodyLock(false);
         }));
 
         // HERO SLIDER
@@ -2693,7 +2726,57 @@
         }
 
         // FORM
-        function handleSubmit() { alert('Thank you for your enquiry! Our team will contact you within 24 hours.'); }
+        (function () {
+            const form = document.getElementById('enquiry-form');
+            if (!form) return;
+            const statusEl = document.getElementById('enquiry-status');
+
+            form.addEventListener('submit', async function (e) {
+                e.preventDefault();
+                if (statusEl) {
+                    statusEl.style.color = 'var(--muted)';
+                    statusEl.textContent = 'Sending your enquiry...';
+                }
+
+                const formData = {
+                    name: document.getElementById('enquiry-name').value.trim(),
+                    phone: document.getElementById('enquiry-phone').value.trim(),
+                    email: document.getElementById('enquiry-email').value.trim(),
+                    project: document.getElementById('enquiry-project').value,
+                    message: document.getElementById('enquiry-message').value.trim(),
+                };
+
+                try {
+                    const res = await fetch('/api/enquiry', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(formData),
+                    });
+
+                    const data = await res.json().catch(() => ({}));
+
+                    if (!res.ok || data.success === false) {
+                        throw new Error(data.error || 'Failed to submit enquiry');
+                    }
+
+                    form.reset();
+                    if (statusEl) {
+                        statusEl.style.color = '#4ade80';
+                        statusEl.textContent =
+                            'Thank you! Your enquiry has been received. Please check your email for an update.';
+                    }
+                } catch (err) {
+                    if (statusEl) {
+                        statusEl.style.color = '#f97373';
+                        statusEl.textContent =
+                            'Sorry, something went wrong. Please try again or contact us directly.';
+                    }
+                    console.error('Enquiry submit error', err);
+                }
+            });
+        })();
 
         // SMOOTH SCROLL
         document.querySelectorAll('a[href^="#"]').forEach(a => {
