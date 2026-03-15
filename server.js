@@ -51,13 +51,27 @@ async function appendToGoogleSheet(rowValues) {
     console.warn('GOOGLE_SHEET_URL not configured or invalid, skipping sheet append.');
     return;
   }
+
+  // Prefer loading full service account JSON from file to avoid key formatting issues.
+  let serviceAccountJson;
+  try {
+    // Path is relative to server.js
+    // eslint-disable-next-line global-require, import/no-dynamic-require
+    serviceAccountJson = require('./peak-castle-490314-n4-f7221ea7cc77.json');
+  } catch (e) {
+    serviceAccountJson = null;
+  }
+
+  const credentials = serviceAccountJson || {
+    client_email: process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL,
+    private_key: process.env.GOOGLE_SERVICE_ACCOUNT_KEY?.replace(/\\n/g, '\n'),
+  };
+
   const auth = new google.auth.GoogleAuth({
-    credentials: {
-      client_email: process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL,
-      private_key: process.env.GOOGLE_SERVICE_ACCOUNT_KEY?.replace(/\\n/g, '\n'),
-    },
+    credentials,
     scopes: ['https://www.googleapis.com/auth/spreadsheets'],
   });
+
   const sheets = google.sheets({ version: 'v4', auth });
   const headerRange = 'Sheet1!A1:Z1';
   const headerRes = await sheets.spreadsheets.values.get({ spreadsheetId: sheetId, range: headerRange });
