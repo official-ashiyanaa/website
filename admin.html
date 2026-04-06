@@ -1,0 +1,915 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin – Ashiyanaa Constructions</title>
+  <link rel="icon" href="/logo.png" type="image/png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Cormorant+Garamond:wght@600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #080e1c;
+      --surface: #0f1729;
+      --surface2: #162035;
+      --surface3: #1c2a42;
+      --gold: #C9A84C;
+      --gold-dim: rgba(201,168,76,0.12);
+      --gold-border: rgba(201,168,76,0.25);
+      --text: #F0EDE5;
+      --muted: #6B7280;
+      --muted2: #9CA3AF;
+      --border: rgba(255,255,255,0.06);
+      --danger: #ef4444;
+      --danger-dim: rgba(239,68,68,0.12);
+      --success: #22c55e;
+      --success-dim: rgba(34,197,94,0.12);
+      --sidebar-w: 240px;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; overflow-x: hidden; }
+
+    /* ════════════════════════════════
+       LOGIN SCREEN
+    ════════════════════════════════ */
+    #loginScreen {
+      min-height: 100vh; display: flex; align-items: center; justify-content: center;
+      background: radial-gradient(ellipse at 50% 0%, rgba(201,168,76,0.08) 0%, transparent 60%), var(--bg);
+      padding: 24px;
+    }
+    .login-box {
+      width: 100%; max-width: 420px;
+      background: var(--surface); border: 1px solid var(--gold-border);
+      border-radius: 20px; padding: 40px; text-align: center;
+      box-shadow: 0 32px 80px rgba(0,0,0,0.6);
+    }
+    .login-logo { font-family: 'Cormorant Garamond', serif; font-size: 26px; color: var(--gold); margin-bottom: 4px; }
+    .login-sub { font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); margin-bottom: 32px; }
+    .login-divider { width: 50px; height: 1px; background: var(--gold); opacity: 0.3; margin: 0 auto 28px; }
+    .login-box h2 { font-size: 20px; color: var(--text); margin-bottom: 6px; }
+    .login-box p { font-size: 13px; color: var(--muted); margin-bottom: 28px; }
+    .form-field { margin-bottom: 16px; text-align: left; }
+    .form-field label { display: block; font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); margin-bottom: 6px; }
+    .form-field input, .form-field select, .form-field textarea {
+      width: 100%; padding: 12px 16px; border-radius: 10px;
+      border: 1px solid rgba(255,255,255,0.1); background: var(--surface2);
+      color: var(--text); font-size: 14px; font-family: 'Inter', sans-serif;
+      outline: none; transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .form-field input:focus, .form-field select:focus, .form-field textarea:focus {
+      border-color: var(--gold); box-shadow: 0 0 0 3px rgba(201,168,76,0.12);
+    }
+    .form-field textarea { resize: vertical; min-height: 100px; }
+    .form-field select option { background: var(--surface2); }
+    .btn-primary {
+      display: block; width: 100%; padding: 13px; border-radius: 999px; border: none;
+      background: linear-gradient(135deg, var(--gold), #9A7A30);
+      color: #fff; font-size: 14px; font-weight: 700; letter-spacing: 0.08em;
+      text-transform: uppercase; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 8px 24px rgba(201,168,76,0.4); }
+    .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+    #loginError { margin-top: 14px; font-size: 13px; color: var(--danger); min-height: 18px; }
+
+    /* ════════════════════════════════
+       ADMIN LAYOUT
+    ════════════════════════════════ */
+    #adminApp { display: none; min-height: 100vh; }
+    .admin-layout { display: flex; min-height: 100vh; }
+
+    /* ── Sidebar ── */
+    .sidebar {
+      width: var(--sidebar-w); min-height: 100vh; position: fixed; top: 0; left: 0; z-index: 50;
+      background: var(--surface); border-right: 1px solid var(--border);
+      display: flex; flex-direction: column;
+    }
+    .sidebar-brand {
+      padding: 24px 20px; border-bottom: 1px solid var(--border);
+      font-family: 'Cormorant Garamond', serif; font-size: 18px; color: var(--gold);
+    }
+    .sidebar-brand span { display: block; font-family: 'Inter', sans-serif; font-size: 10px; color: var(--muted); letter-spacing: 0.15em; text-transform: uppercase; margin-top: 2px; }
+    .sidebar-nav { flex: 1; padding: 20px 12px; }
+    .nav-item {
+      display: flex; align-items: center; gap: 12px;
+      padding: 11px 14px; border-radius: 10px; cursor: pointer;
+      font-size: 14px; font-weight: 500; color: var(--muted2);
+      transition: all 0.2s; margin-bottom: 2px; border: none; background: transparent; width: 100%; text-align: left;
+    }
+    .nav-item:hover { background: var(--surface2); color: var(--text); }
+    .nav-item.active { background: var(--gold-dim); color: var(--gold); border: 1px solid var(--gold-border); }
+    .nav-icon { font-size: 16px; width: 20px; text-align: center; }
+    .sidebar-footer { padding: 16px 12px; border-top: 1px solid var(--border); }
+    .logout-btn {
+      display: flex; align-items: center; gap: 10px; width: 100%;
+      padding: 10px 14px; border-radius: 10px; border: none; background: transparent;
+      color: var(--muted); font-size: 13px; cursor: pointer; transition: all 0.2s;
+    }
+    .logout-btn:hover { background: var(--danger-dim); color: var(--danger); }
+    .sidebar-visit { margin-bottom: 8px; }
+    .visit-link {
+      display: flex; align-items: center; gap: 10px; width: 100%;
+      padding: 10px 14px; border-radius: 10px; border: none; background: transparent;
+      color: var(--muted2); font-size: 13px; cursor: pointer; transition: all 0.2s; text-decoration: none;
+    }
+    .visit-link:hover { background: var(--success-dim); color: var(--success); }
+
+    /* ── Main Content ── */
+    .main-content { margin-left: var(--sidebar-w); flex: 1; min-height: 100vh; }
+    .content-header {
+      padding: 28px 36px; border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+      background: var(--surface); position: sticky; top: 0; z-index: 10;
+    }
+    .content-header h1 { font-size: 20px; font-weight: 600; color: var(--text); }
+    .content-header p { font-size: 13px; color: var(--muted); margin-top: 2px; }
+    .content-body { padding: 32px 36px; }
+
+    /* ── Stats ── */
+    .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 32px; }
+    .stat-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 14px; padding: 20px 24px;
+      transition: border-color 0.2s;
+    }
+    .stat-card:hover { border-color: var(--gold-border); }
+    .stat-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); margin-bottom: 8px; }
+    .stat-value { font-family: 'Cormorant Garamond', serif; font-size: 40px; font-weight: 600; color: var(--gold); line-height: 1; }
+    .stat-sub { font-size: 12px; color: var(--muted); margin-top: 4px; }
+
+    /* ── Table ── */
+    .table-wrap { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; }
+    .table-toolbar {
+      padding: 16px 20px; border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;
+    }
+    .table-search {
+      padding: 9px 14px; border-radius: 8px; border: 1px solid var(--border);
+      background: var(--surface2); color: var(--text); font-size: 13px; width: 240px;
+      outline: none; transition: border-color 0.2s;
+    }
+    .table-search:focus { border-color: var(--gold); }
+    .table-filter { padding: 9px 14px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface2); color: var(--text); font-size: 13px; outline: none; }
+    table { width: 100%; border-collapse: collapse; }
+    thead th {
+      padding: 12px 16px; text-align: left; font-size: 11px; font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted);
+      border-bottom: 1px solid var(--border); background: var(--surface2);
+    }
+    tbody tr { transition: background 0.15s; }
+    tbody tr:hover { background: var(--surface2); }
+    tbody tr + tr { border-top: 1px solid var(--border); }
+    tbody td { padding: 14px 16px; font-size: 13px; color: var(--muted2); vertical-align: middle; }
+    tbody td:first-child { color: var(--text); font-weight: 500; }
+    .badge {
+      display: inline-block; padding: 3px 10px; border-radius: 999px;
+      font-size: 10px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+    }
+    .badge-green { background: var(--success-dim); color: var(--success); }
+    .badge-gold { background: var(--gold-dim); color: var(--gold); border: 1px solid var(--gold-border); }
+    .badge-blue { background: rgba(59,130,246,0.12); color: #60a5fa; }
+    .badge-gray { background: rgba(107,114,128,0.12); color: #9CA3AF; }
+    .action-btns { display: flex; gap: 6px; }
+    .btn-icon {
+      padding: 7px 14px; border-radius: 8px; border: none; cursor: pointer;
+      font-size: 12px; font-weight: 600; transition: all 0.2s;
+    }
+    .btn-edit { background: var(--gold-dim); color: var(--gold); border: 1px solid var(--gold-border); }
+    .btn-edit:hover { background: rgba(201,168,76,0.25); }
+    .btn-del { background: var(--danger-dim); color: var(--danger); }
+    .btn-del:hover { background: rgba(239,68,68,0.25); }
+    .btn-toggle { background: rgba(107,114,128,0.12); color: #9CA3AF; }
+    .btn-toggle:hover { background: rgba(107,114,128,0.25); }
+
+    /* ── Add/Edit button ── */
+    .btn-add {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 10px 20px; border-radius: 10px; border: none;
+      background: linear-gradient(135deg, var(--gold), #9A7A30);
+      color: #fff; font-size: 13px; font-weight: 600; cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .btn-add:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(201,168,76,0.35); }
+
+    /* ── Modal ── */
+    .modal-overlay {
+      display: none; position: fixed; inset: 0; z-index: 200;
+      background: rgba(0,0,0,0.6); backdrop-filter: blur(4px);
+      align-items: center; justify-content: center; padding: 20px;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal {
+      background: var(--surface); border: 1px solid var(--gold-border);
+      border-radius: 20px; width: 100%; max-width: 600px;
+      max-height: 90vh; overflow-y: auto; padding: 32px;
+      box-shadow: 0 32px 80px rgba(0,0,0,0.7);
+    }
+    .modal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; }
+    .modal-header h2 { font-size: 18px; font-weight: 600; }
+    .modal-close { background: none; border: none; color: var(--muted); font-size: 20px; cursor: pointer; padding: 4px 8px; border-radius: 6px; }
+    .modal-close:hover { background: var(--surface2); color: var(--text); }
+    .modal-footer { display: flex; gap: 10px; justify-content: flex-end; margin-top: 24px; padding-top: 20px; border-top: 1px solid var(--border); }
+    .btn-cancel { padding: 10px 20px; border-radius: 8px; border: 1px solid var(--border); background: transparent; color: var(--muted2); font-size: 13px; cursor: pointer; transition: all 0.2s; }
+    .btn-cancel:hover { background: var(--surface2); color: var(--text); }
+    .btn-save { padding: 10px 24px; border-radius: 8px; border: none; background: linear-gradient(135deg, var(--gold), #9A7A30); color: #fff; font-size: 13px; font-weight: 700; cursor: pointer; transition: transform 0.2s; }
+    .btn-save:hover { transform: translateY(-1px); }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+
+    /* ── Image upload ── */
+    .upload-area {
+      border: 2px dashed var(--gold-border); border-radius: 10px;
+      padding: 24px; text-align: center; cursor: pointer; transition: all 0.2s;
+      background: var(--surface2);
+    }
+    .upload-area:hover { border-color: var(--gold); background: var(--gold-dim); }
+    .upload-area input { display: none; }
+    .upload-preview {
+      width: 100%; height: 160px; object-fit: cover;
+      border-radius: 8px; margin-bottom: 8px; display: none;
+    }
+    .upload-icon { font-size: 32px; margin-bottom: 8px; }
+    .upload-text { font-size: 13px; color: var(--muted2); }
+    .upload-text span { color: var(--gold); }
+    .upload-spinner { display: none; font-size: 13px; color: var(--muted); }
+
+    /* ── Toast ── */
+    #toast {
+      position: fixed; bottom: 28px; right: 28px; z-index: 9999;
+      padding: 14px 22px; border-radius: 12px; font-size: 14px; font-weight: 500;
+      transform: translateY(80px); opacity: 0; transition: all 0.3s ease;
+      pointer-events: none; display: flex; align-items: center; gap: 10px;
+    }
+    #toast.show { transform: translateY(0); opacity: 1; }
+    #toast.success { background: var(--success-dim); border: 1px solid rgba(34,197,94,0.3); color: var(--success); }
+    #toast.error { background: var(--danger-dim); border: 1px solid rgba(239,68,68,0.3); color: var(--danger); }
+
+    /* ── Confirm delete ── */
+    .confirm-overlay {
+      display: none; position: fixed; inset: 0; z-index: 300;
+      background: rgba(0,0,0,0.7); backdrop-filter: blur(4px);
+      align-items: center; justify-content: center;
+    }
+    .confirm-overlay.open { display: flex; }
+    .confirm-box {
+      background: var(--surface); border: 1px solid rgba(239,68,68,0.3);
+      border-radius: 16px; padding: 32px; max-width: 400px; width: 90%; text-align: center;
+    }
+    .confirm-box h3 { font-size: 18px; margin-bottom: 10px; }
+    .confirm-box p { font-size: 14px; color: var(--muted); margin-bottom: 24px; }
+    .confirm-btns { display: flex; gap: 10px; justify-content: center; }
+    .btn-danger { padding: 10px 28px; border-radius: 8px; background: var(--danger); color: #fff; border: none; font-weight: 600; font-size: 14px; cursor: pointer; }
+    .btn-danger:hover { background: #dc2626; }
+
+    /* ── Empty state ── */
+    .empty-state { text-align: center; padding: 60px 20px; color: var(--muted); }
+    .empty-state-icon { font-size: 48px; margin-bottom: 12px; opacity: 0.4; }
+    .empty-state h3 { font-size: 18px; margin-bottom: 6px; }
+    .empty-state p { font-size: 13px; }
+
+    /* ── Progress bar ── */
+    .progress-bar {
+      width: 80px; height: 6px; background: var(--surface3); border-radius: 999px; overflow: hidden; display: inline-block; vertical-align: middle;
+    }
+    .progress-fill { height: 100%; border-radius: 999px; background: linear-gradient(135deg, var(--gold), #9A7A30); }
+
+    /* ── Img thumb ── */
+    .img-thumb { width: 40px; height: 40px; border-radius: 8px; object-fit: cover; border: 1px solid var(--border); }
+    .img-placeholder { width: 40px; height: 40px; border-radius: 8px; background: var(--surface3); display: flex; align-items: center; justify-content: center; font-size: 18px; }
+  </style>
+</head>
+<body>
+
+<!-- ════════ LOGIN ════════ -->
+<div id="loginScreen">
+  <div class="login-box">
+    <div class="login-logo">Ashiyanaa Constructions</div>
+    <div class="login-sub">Admin Panel</div>
+    <div class="login-divider"></div>
+    <h2>Welcome Back</h2>
+    <p>Enter your password to access the dashboard</p>
+    <div class="form-field">
+      <label for="pwdInput">Admin Password</label>
+      <input type="password" id="pwdInput" placeholder="Enter password..." autocomplete="current-password">
+    </div>
+    <button class="btn-primary" id="loginBtn" onclick="doLogin()">Sign In →</button>
+    <div id="loginError"></div>
+  </div>
+</div>
+
+<!-- ════════ ADMIN APP ════════ -->
+<div id="adminApp">
+  <div class="admin-layout">
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-brand">
+        Ashiyanaa
+        <span>Admin Dashboard</span>
+      </div>
+      <nav class="sidebar-nav">
+        <button class="nav-item active" id="nav-dashboard" onclick="showTab('dashboard')">
+          <span class="nav-icon">📊</span> Dashboard
+        </button>
+        <button class="nav-item" id="nav-projects" onclick="showTab('projects')">
+          <span class="nav-icon">🏗️</span> Projects
+        </button>
+        <button class="nav-item" id="nav-founders" onclick="showTab('founders')">
+          <span class="nav-icon">👥</span> Founders
+        </button>
+      </nav>
+      <div class="sidebar-footer">
+        <div class="sidebar-visit">
+          <a href="/" target="_blank" class="visit-link"><span>🌐</span> View Website</a>
+        </div>
+        <div class="sidebar-visit">
+          <a href="/founders" target="_blank" class="visit-link"><span>👥</span> View Founders Page</a>
+        </div>
+        <button class="logout-btn" onclick="doLogout()"><span>🚪</span> Sign Out</button>
+      </div>
+    </aside>
+
+    <!-- Main -->
+    <main class="main-content">
+
+      <!-- ── DASHBOARD ── -->
+      <div id="tab-dashboard">
+        <div class="content-header">
+          <div><h1>Dashboard</h1><p>Overview of your projects and team</p></div>
+        </div>
+        <div class="content-body">
+          <div class="stats-grid" id="statsGrid">
+            <div class="stat-card"><div class="stat-label">Total Projects</div><div class="stat-value" id="s-total">—</div><div class="stat-sub">All cities</div></div>
+            <div class="stat-card"><div class="stat-label">Nagaon</div><div class="stat-value" id="s-nagaon">—</div><div class="stat-sub">Projects</div></div>
+            <div class="stat-card"><div class="stat-label">Lumding</div><div class="stat-value" id="s-lumding">—</div><div class="stat-sub">Projects</div></div>
+            <div class="stat-card"><div class="stat-label">Hojai</div><div class="stat-value" id="s-hojai">—</div><div class="stat-sub">Projects</div></div>
+            <div class="stat-card"><div class="stat-label">Completed</div><div class="stat-value" id="s-completed" style="color:var(--success)">—</div><div class="stat-sub">Delivered</div></div>
+            <div class="stat-card"><div class="stat-label">Ongoing</div><div class="stat-value" id="s-ongoing" style="color:var(--gold)">—</div><div class="stat-sub">Active</div></div>
+            <div class="stat-card"><div class="stat-label">Founders / Team</div><div class="stat-value" id="s-founders">—</div><div class="stat-sub">Profiles</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── PROJECTS ── -->
+      <div id="tab-projects" style="display:none">
+        <div class="content-header">
+          <div><h1>Projects</h1><p>Manage all construction projects</p></div>
+          <button class="btn-add" onclick="openProjectModal()">+ Add Project</button>
+        </div>
+        <div class="content-body">
+          <div class="table-wrap">
+            <div class="table-toolbar">
+              <input class="table-search" type="text" id="projectSearch" placeholder="Search projects..." oninput="renderProjectsTable()">
+              <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                <select class="table-filter" id="cityFilter" onchange="renderProjectsTable()">
+                  <option value="">All Cities</option>
+                  <option value="nagaon">Nagaon</option>
+                  <option value="lumding">Lumding</option>
+                  <option value="hojai">Hojai</option>
+                </select>
+                <select class="table-filter" id="statusFilter" onchange="renderProjectsTable()">
+                  <option value="">All Status</option>
+                  <option value="completed">Completed</option>
+                  <option value="ongoing">Ongoing</option>
+                  <option value="upcoming">Upcoming</option>
+                </select>
+              </div>
+            </div>
+            <div id="projectsTableWrap"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── FOUNDERS ── -->
+      <div id="tab-founders" style="display:none">
+        <div class="content-header">
+          <div><h1>Founders & Team</h1><p>Manage founder profiles shown on the website</p></div>
+          <button class="btn-add" onclick="openFounderModal()">+ Add Founder</button>
+        </div>
+        <div class="content-body">
+          <div class="table-wrap">
+            <div class="table-toolbar">
+              <input class="table-search" type="text" id="founderSearch" placeholder="Search team..." oninput="renderFoundersTable()">
+            </div>
+            <div id="foundersTableWrap"></div>
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+</div>
+
+<!-- ════════ PROJECT MODAL ════════ -->
+<div class="modal-overlay" id="projectModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h2 id="projectModalTitle">Add Project</h2>
+      <button class="modal-close" onclick="closeProjectModal()">✕</button>
+    </div>
+    <input type="hidden" id="pId">
+    <div class="form-row">
+      <div class="form-field">
+        <label>Project Name *</label>
+        <input id="pName" type="text" placeholder="e.g. Munna Gupta">
+      </div>
+      <div class="form-field">
+        <label>Owner Name</label>
+        <input id="pOwner" type="text" placeholder="Owner / Client name">
+      </div>
+    </div>
+    <div class="form-field">
+      <label>Location *</label>
+      <input id="pLocation" type="text" placeholder="e.g. Lanka Road, Lumding">
+    </div>
+    <div class="form-row">
+      <div class="form-field">
+        <label>City *</label>
+        <select id="pCity">
+          <option value="nagaon">Nagaon</option>
+          <option value="lumding">Lumding</option>
+          <option value="hojai">Hojai</option>
+        </select>
+      </div>
+      <div class="form-field">
+        <label>Type</label>
+        <select id="pType">
+          <option value="residential">Residential</option>
+          <option value="commercial">Commercial</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-field">
+        <label>Status</label>
+        <select id="pStatus">
+          <option value="ongoing">Ongoing</option>
+          <option value="completed">Completed</option>
+          <option value="upcoming">Upcoming</option>
+        </select>
+      </div>
+      <div class="form-field">
+        <label>Completion % (0–100)</label>
+        <input id="pPercent" type="number" min="0" max="100" placeholder="e.g. 80">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-field">
+        <label>Series Label</label>
+        <input id="pSeries" type="text" placeholder="e.g. Project 1 — Lumding">
+      </div>
+      <div class="form-field">
+        <label>Display Order</label>
+        <input id="pOrder" type="number" placeholder="e.g. 1">
+      </div>
+    </div>
+    <div class="form-field">
+      <label>Description</label>
+      <textarea id="pDesc" placeholder="Brief description of the project..."></textarea>
+    </div>
+    <div class="form-field">
+      <label>Project Image</label>
+      <div class="upload-area" onclick="document.getElementById('pImageFile').click()">
+        <img class="upload-preview" id="pImagePreview">
+        <input type="file" id="pImageFile" accept="image/*" onchange="handleImageUpload('pImageFile','pImagePreview','pImageUrl','pUploadSpinner')">
+        <div id="pUploadSpinner" class="upload-spinner">⏳ Uploading...</div>
+        <div id="pUploadPlaceholder">
+          <div class="upload-icon">📷</div>
+          <div class="upload-text">Click to upload image<br><span>or paste a URL below</span></div>
+        </div>
+      </div>
+      <input id="pImageUrl" type="text" style="margin-top:8px;" placeholder="Or paste image URL..." oninput="previewFromUrl('pImageUrl','pImagePreview','pUploadPlaceholder')">
+      <input type="hidden" id="pFinalImage">
+    </div>
+    <div class="modal-footer">
+      <button class="btn-cancel" onclick="closeProjectModal()">Cancel</button>
+      <button class="btn-save" onclick="saveProject()">Save Project</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ FOUNDER MODAL ════════ -->
+<div class="modal-overlay" id="founderModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h2 id="founderModalTitle">Add Founder</h2>
+      <button class="modal-close" onclick="closeFounderModal()">✕</button>
+    </div>
+    <input type="hidden" id="fId">
+    <div class="form-row">
+      <div class="form-field">
+        <label>Full Name *</label>
+        <input id="fName" type="text" placeholder="e.g. Rajan Kumar">
+      </div>
+      <div class="form-field">
+        <label>Title / Role *</label>
+        <input id="fTitle" type="text" placeholder="e.g. Managing Director">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-field">
+        <label>Phone</label>
+        <input id="fPhone" type="text" placeholder="+91 XXXXX XXXXX">
+      </div>
+      <div class="form-field">
+        <label>Email</label>
+        <input id="fEmail" type="email" placeholder="email@example.com">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-field">
+        <label>Display Order</label>
+        <input id="fOrder" type="number" placeholder="e.g. 1">
+      </div>
+    </div>
+    <div class="form-field">
+      <label>Bio</label>
+      <textarea id="fBio" placeholder="A brief description about this person..."></textarea>
+    </div>
+    <div class="form-field">
+      <label>Photo</label>
+      <div class="upload-area" onclick="document.getElementById('fImageFile').click()">
+        <img class="upload-preview" id="fImagePreview">
+        <input type="file" id="fImageFile" accept="image/*" onchange="handleImageUpload('fImageFile','fImagePreview','fImageUrl','fUploadSpinner')">
+        <div id="fUploadSpinner" class="upload-spinner">⏳ Uploading...</div>
+        <div id="fUploadPlaceholder">
+          <div class="upload-icon">🤳</div>
+          <div class="upload-text">Click to upload photo<br><span>or paste a URL below</span></div>
+        </div>
+      </div>
+      <input id="fImageUrl" type="text" style="margin-top:8px;" placeholder="Or paste image URL..." oninput="previewFromUrl('fImageUrl','fImagePreview','fUploadPlaceholder')">
+      <input type="hidden" id="fFinalImage">
+    </div>
+    <div class="modal-footer">
+      <button class="btn-cancel" onclick="closeFounderModal()">Cancel</button>
+      <button class="btn-save" onclick="saveFounder()">Save Founder</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ CONFIRM DELETE ════════ -->
+<div class="confirm-overlay" id="confirmOverlay">
+  <div class="confirm-box">
+    <h3>Delete this item?</h3>
+    <p id="confirmMsg">This action cannot be undone.</p>
+    <div class="confirm-btns">
+      <button class="btn-cancel" onclick="closeConfirm()">Cancel</button>
+      <button class="btn-danger" id="confirmOkBtn">Delete</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div id="toast"></div>
+
+<script>
+// ════════════════════════════════
+// STATE
+// ════════════════════════════════
+let TOKEN = localStorage.getItem('ac_admin_token') || '';
+let allProjects = [];
+let allFounders = [];
+
+// ════════════════════════════════
+// BOOT
+// ════════════════════════════════
+(async function() {
+  if (!TOKEN) return showLogin();
+  try {
+    const r = await apiFetch('/api/admin/verify', 'GET');
+    if (r.success) showApp();
+    else showLogin();
+  } catch { showLogin(); }
+})();
+
+function showLogin() { document.getElementById('loginScreen').style.display='flex'; document.getElementById('adminApp').style.display='none'; }
+function showApp() { document.getElementById('loginScreen').style.display='none'; document.getElementById('adminApp').style.display='block'; loadStats(); loadProjects(); loadFounders(); }
+
+// ════════════════════════════════
+// AUTH
+// ════════════════════════════════
+document.getElementById('pwdInput').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
+async function doLogin() {
+  const pwd = document.getElementById('pwdInput').value;
+  const btn = document.getElementById('loginBtn');
+  const err = document.getElementById('loginError');
+  if (!pwd) { err.textContent = 'Please enter your password.'; return; }
+  btn.textContent = 'Signing in...'; btn.disabled = true;
+  try {
+    const r = await apiFetch('/api/admin/login', 'POST', { password: pwd });
+    if (r.success) { TOKEN = r.token; localStorage.setItem('ac_admin_token', TOKEN); showApp(); }
+    else { err.textContent = r.error || 'Invalid password.'; }
+  } catch { err.textContent = 'Server error. Please try again.'; }
+  finally { btn.textContent = 'Sign In →'; btn.disabled = false; }
+}
+function doLogout() { TOKEN = ''; localStorage.removeItem('ac_admin_token'); showLogin(); }
+
+// ════════════════════════════════
+// TABS
+// ════════════════════════════════
+function showTab(tab) {
+  ['dashboard','projects','founders'].forEach(t => {
+    document.getElementById(`tab-${t}`).style.display = t === tab ? 'block' : 'none';
+    document.getElementById(`nav-${t}`).classList.toggle('active', t === tab);
+  });
+}
+
+// ════════════════════════════════
+// STATS
+// ════════════════════════════════
+async function loadStats() {
+  try {
+    const r = await apiFetch('/api/admin/stats', 'GET');
+    if (r.success) {
+      const s = r.stats;
+      document.getElementById('s-total').textContent = s.totalProjects;
+      document.getElementById('s-nagaon').textContent = s.nagaon;
+      document.getElementById('s-lumding').textContent = s.lumding;
+      document.getElementById('s-hojai').textContent = s.hojai;
+      document.getElementById('s-completed').textContent = s.completed;
+      document.getElementById('s-ongoing').textContent = s.ongoing;
+      document.getElementById('s-founders').textContent = s.founders;
+    }
+  } catch {}
+}
+
+// ════════════════════════════════
+// PROJECTS
+// ════════════════════════════════
+async function loadProjects() {
+  const r = await apiFetch('/api/admin/projects', 'GET');
+  if (r.success) { allProjects = r.projects; renderProjectsTable(); }
+}
+
+function renderProjectsTable() {
+  const search = document.getElementById('projectSearch').value.toLowerCase();
+  const city = document.getElementById('cityFilter').value;
+  const status = document.getElementById('statusFilter').value;
+  const filtered = allProjects.filter(p =>
+    (!search || p.name.toLowerCase().includes(search) || p.location.toLowerCase().includes(search)) &&
+    (!city || p.city === city) &&
+    (!status || p.status === status)
+  );
+  const wrap = document.getElementById('projectsTableWrap');
+  if (!filtered.length) {
+    wrap.innerHTML = `<div class="empty-state"><div class="empty-state-icon">🏗️</div><h3>No projects found</h3><p>Try adjusting your filters or add a new project.</p></div>`;
+    return;
+  }
+  wrap.innerHTML = `<table><thead><tr>
+    <th>Image</th><th>Name</th><th>Location</th><th>City</th><th>Type</th><th>Status</th><th>Progress</th><th>Actions</th>
+  </tr></thead><tbody>
+  ${filtered.map(p => `<tr>
+    <td>${p.image ? `<img class="img-thumb" src="${p.image}" alt="">` : `<div class="img-placeholder">🏗️</div>`}</td>
+    <td>${p.name}${p.seriesLabel ? `<br><span style="font-size:11px;color:var(--muted)">${p.seriesLabel}</span>` : ''}</td>
+    <td style="max-width:180px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${p.location}</td>
+    <td><span class="badge badge-blue">${p.city}</span></td>
+    <td><span class="badge ${p.type==='commercial' ? 'badge-gold' : 'badge-gray'}">${p.type}</span></td>
+    <td><span class="badge ${p.status==='completed' ? 'badge-green' : p.status==='ongoing' ? 'badge-gold' : 'badge-gray'}">${p.status}</span></td>
+    <td>${p.completionPercent != null ? `<div class="progress-bar"><div class="progress-fill" style="width:${p.completionPercent}%"></div></div> <span style="font-size:11px;margin-left:4px">${p.completionPercent}%</span>` : '—'}</td>
+    <td><div class="action-btns">
+      <button class="btn-icon btn-edit" onclick="editProject('${p._id}')">Edit</button>
+      <button class="btn-icon btn-toggle" onclick="toggleProject('${p._id}','${p.isActive}')">${p.isActive ? 'Hide' : 'Show'}</button>
+      <button class="btn-icon btn-del" onclick="deleteProject('${p._id}','${p.name}')">Delete</button>
+    </div></td>
+  </tr>`).join('')}
+  </tbody></table>`;
+}
+
+function openProjectModal(project=null) {
+  document.getElementById('projectModalTitle').textContent = project ? 'Edit Project' : 'Add Project';
+  document.getElementById('pId').value = project?._id || '';
+  document.getElementById('pName').value = project?.name || '';
+  document.getElementById('pOwner').value = project?.ownerName || '';
+  document.getElementById('pLocation').value = project?.location || '';
+  document.getElementById('pCity').value = project?.city || 'nagaon';
+  document.getElementById('pType').value = project?.type || 'residential';
+  document.getElementById('pStatus').value = project?.status || 'ongoing';
+  document.getElementById('pPercent').value = project?.completionPercent ?? '';
+  document.getElementById('pSeries').value = project?.seriesLabel || '';
+  document.getElementById('pOrder').value = project?.displayOrder ?? '';
+  document.getElementById('pDesc').value = project?.description || '';
+  document.getElementById('pImageUrl').value = project?.image || '';
+  document.getElementById('pFinalImage').value = project?.image || '';
+  const preview = document.getElementById('pImagePreview');
+  const placeholder = document.getElementById('pUploadPlaceholder');
+  if (project?.image) { preview.src = project.image; preview.style.display = 'block'; placeholder.style.display = 'none'; }
+  else { preview.style.display = 'none'; placeholder.style.display = 'block'; }
+  document.getElementById('projectModal').classList.add('open');
+}
+function closeProjectModal() { document.getElementById('projectModal').classList.remove('open'); }
+
+function editProject(id) {
+  const p = allProjects.find(x => x._id === id);
+  if (p) openProjectModal(p);
+}
+
+async function saveProject() {
+  const id = document.getElementById('pId').value;
+  const imageUrl = document.getElementById('pFinalImage').value || document.getElementById('pImageUrl').value;
+  const body = {
+    name: document.getElementById('pName').value.trim(),
+    ownerName: document.getElementById('pOwner').value.trim(),
+    location: document.getElementById('pLocation').value.trim(),
+    city: document.getElementById('pCity').value,
+    type: document.getElementById('pType').value,
+    status: document.getElementById('pStatus').value,
+    completionPercent: document.getElementById('pPercent').value ? +document.getElementById('pPercent').value : null,
+    seriesLabel: document.getElementById('pSeries').value.trim(),
+    displayOrder: document.getElementById('pOrder').value ? +document.getElementById('pOrder').value : 0,
+    description: document.getElementById('pDesc').value.trim(),
+    image: imageUrl,
+  };
+  if (!body.name || !body.location) { showToast('Name and location are required.','error'); return; }
+  try {
+    const r = id
+      ? await apiFetch(`/api/projects/${id}`, 'PUT', body)
+      : await apiFetch('/api/projects', 'POST', body);
+    if (r.success) {
+      showToast(id ? 'Project updated!' : 'Project added!', 'success');
+      closeProjectModal(); await loadProjects(); await loadStats();
+    } else showToast(r.error || 'Failed to save', 'error');
+  } catch(e) { showToast('Server error', 'error'); }
+}
+
+async function toggleProject(id, isActive) {
+  const active = isActive === 'true';
+  const r = await apiFetch(`/api/projects/${id}`, 'PUT', { isActive: !active });
+  if (r.success) { showToast(`Project ${!active ? 'shown' : 'hidden'}`, 'success'); await loadProjects(); await loadStats(); }
+}
+
+function deleteProject(id, name) {
+  showConfirm(`Delete "${name}"?`, 'This project will be permanently removed.', async () => {
+    const r = await apiFetch(`/api/projects/${id}`, 'DELETE');
+    if (r.success) { showToast('Project deleted', 'success'); await loadProjects(); await loadStats(); }
+    else showToast(r.error || 'Failed', 'error');
+  });
+}
+
+// ════════════════════════════════
+// FOUNDERS
+// ════════════════════════════════
+async function loadFounders() {
+  const r = await apiFetch('/api/admin/founders', 'GET');
+  if (r.success) { allFounders = r.founders; renderFoundersTable(); }
+}
+
+function renderFoundersTable() {
+  const search = document.getElementById('founderSearch').value.toLowerCase();
+  const filtered = allFounders.filter(f =>
+    !search || f.name.toLowerCase().includes(search) || f.title.toLowerCase().includes(search)
+  );
+  const wrap = document.getElementById('foundersTableWrap');
+  if (!filtered.length) {
+    wrap.innerHTML = `<div class="empty-state"><div class="empty-state-icon">👥</div><h3>No founders added</h3><p>Click "Add Founder" to add the first profile.</p></div>`;
+    return;
+  }
+  wrap.innerHTML = `<table><thead><tr>
+    <th>Photo</th><th>Name</th><th>Title</th><th>Phone</th><th>Email</th><th>Status</th><th>Actions</th>
+  </tr></thead><tbody>
+  ${filtered.map(f => `<tr>
+    <td>${f.image ? `<img class="img-thumb" src="${f.image}" alt="" style="border-radius:50%">` : `<div class="img-placeholder">👤</div>`}</td>
+    <td>${f.name}</td>
+    <td style="color:var(--gold)">${f.title}</td>
+    <td>${f.phone || '—'}</td>
+    <td>${f.email || '—'}</td>
+    <td><span class="badge ${f.isActive ? 'badge-green' : 'badge-gray'}">${f.isActive ? 'Visible' : 'Hidden'}</span></td>
+    <td><div class="action-btns">
+      <button class="btn-icon btn-edit" onclick="editFounder('${f._id}')">Edit</button>
+      <button class="btn-icon btn-toggle" onclick="toggleFounder('${f._id}','${f.isActive}')">${f.isActive ? 'Hide' : 'Show'}</button>
+      <button class="btn-icon btn-del" onclick="deleteFounder('${f._id}','${f.name}')">Delete</button>
+    </div></td>
+  </tr>`).join('')}
+  </tbody></table>`;
+}
+
+function openFounderModal(founder=null) {
+  document.getElementById('founderModalTitle').textContent = founder ? 'Edit Founder' : 'Add Founder';
+  document.getElementById('fId').value = founder?._id || '';
+  document.getElementById('fName').value = founder?.name || '';
+  document.getElementById('fTitle').value = founder?.title || '';
+  document.getElementById('fPhone').value = founder?.phone || '';
+  document.getElementById('fEmail').value = founder?.email || '';
+  document.getElementById('fOrder').value = founder?.displayOrder ?? '';
+  document.getElementById('fBio').value = founder?.bio || '';
+  document.getElementById('fImageUrl').value = founder?.image || '';
+  document.getElementById('fFinalImage').value = founder?.image || '';
+  const preview = document.getElementById('fImagePreview');
+  const placeholder = document.getElementById('fUploadPlaceholder');
+  if (founder?.image) { preview.src = founder.image; preview.style.display = 'block'; placeholder.style.display = 'none'; }
+  else { preview.style.display = 'none'; placeholder.style.display = 'block'; }
+  document.getElementById('founderModal').classList.add('open');
+}
+function closeFounderModal() { document.getElementById('founderModal').classList.remove('open'); }
+
+function editFounder(id) {
+  const f = allFounders.find(x => x._id === id);
+  if (f) openFounderModal(f);
+}
+
+async function saveFounder() {
+  const id = document.getElementById('fId').value;
+  const imageUrl = document.getElementById('fFinalImage').value || document.getElementById('fImageUrl').value;
+  const body = {
+    name: document.getElementById('fName').value.trim(),
+    title: document.getElementById('fTitle').value.trim(),
+    phone: document.getElementById('fPhone').value.trim(),
+    email: document.getElementById('fEmail').value.trim(),
+    displayOrder: document.getElementById('fOrder').value ? +document.getElementById('fOrder').value : 0,
+    bio: document.getElementById('fBio').value.trim(),
+    image: imageUrl,
+  };
+  if (!body.name || !body.title) { showToast('Name and title are required.', 'error'); return; }
+  try {
+    const r = id
+      ? await apiFetch(`/api/founders/${id}`, 'PUT', body)
+      : await apiFetch('/api/founders', 'POST', body);
+    if (r.success) {
+      showToast(id ? 'Founder updated!' : 'Founder added!', 'success');
+      closeFounderModal(); await loadFounders(); await loadStats();
+    } else showToast(r.error || 'Failed to save', 'error');
+  } catch { showToast('Server error', 'error'); }
+}
+
+async function toggleFounder(id, isActive) {
+  const active = isActive === 'true';
+  const r = await apiFetch(`/api/founders/${id}`, 'PUT', { isActive: !active });
+  if (r.success) { showToast(`Founder ${!active ? 'shown' : 'hidden'}`, 'success'); await loadFounders(); await loadStats(); }
+}
+
+function deleteFounder(id, name) {
+  showConfirm(`Delete "${name}"?`, 'This founder profile will be permanently removed.', async () => {
+    const r = await apiFetch(`/api/founders/${id}`, 'DELETE');
+    if (r.success) { showToast('Founder deleted', 'success'); await loadFounders(); await loadStats(); }
+    else showToast(r.error || 'Failed', 'error');
+  });
+}
+
+// ════════════════════════════════
+// IMAGE UPLOAD
+// ════════════════════════════════
+async function handleImageUpload(fileInputId, previewId, urlInputId, spinnerId) {
+  const file = document.getElementById(fileInputId).files[0];
+  if (!file) return;
+  const spinner = document.getElementById(spinnerId);
+  const preview = document.getElementById(previewId);
+  const placeholder = document.getElementById(fileInputId === 'pImageFile' ? 'pUploadPlaceholder' : 'fUploadPlaceholder');
+  spinner.style.display = 'block'; placeholder.style.display = 'none'; preview.style.display = 'none';
+  try {
+    const fd = new FormData(); fd.append('image', file);
+    const res = await fetch('/api/upload', { method: 'POST', headers: { Authorization: `Bearer ${TOKEN}` }, body: fd });
+    const data = await res.json();
+    if (data.success) {
+      document.getElementById(urlInputId).value = data.url;
+      document.getElementById(fileInputId === 'pImageFile' ? 'pFinalImage' : 'fFinalImage').value = data.url;
+      preview.src = data.url; preview.style.display = 'block';
+      showToast('Image uploaded!', 'success');
+    } else showToast(data.error || 'Upload failed', 'error');
+  } catch { showToast('Upload error', 'error'); }
+  finally { spinner.style.display = 'none'; }
+}
+
+function previewFromUrl(urlInputId, previewId, placeholderId) {
+  const url = document.getElementById(urlInputId).value.trim();
+  const preview = document.getElementById(previewId);
+  const placeholder = document.getElementById(placeholderId);
+  const finalId = urlInputId === 'pImageUrl' ? 'pFinalImage' : 'fFinalImage';
+  if (url) { preview.src = url; preview.style.display = 'block'; placeholder.style.display = 'none'; document.getElementById(finalId).value = url; }
+  else { preview.style.display = 'none'; placeholder.style.display = 'block'; }
+}
+
+// ════════════════════════════════
+// UTILITIES
+// ════════════════════════════════
+async function apiFetch(url, method='GET', body=null) {
+  const opts = { method, headers: { 'Content-Type': 'application/json', ...(TOKEN ? { Authorization: `Bearer ${TOKEN}` } : {}) } };
+  if (body) opts.body = JSON.stringify(body);
+  const res = await fetch(url, opts);
+  return res.json();
+}
+
+function showToast(msg, type='success') {
+  const t = document.getElementById('toast');
+  t.textContent = (type === 'success' ? '✅ ' : '❌ ') + msg;
+  t.className = `show ${type}`;
+  clearTimeout(t._timer);
+  t._timer = setTimeout(() => { t.className = ''; }, 3000);
+}
+
+let confirmCallback = null;
+function showConfirm(title, msg, cb) {
+  document.querySelector('#confirmOverlay h3').textContent = title;
+  document.getElementById('confirmMsg').textContent = msg;
+  confirmCallback = cb;
+  document.getElementById('confirmOverlay').classList.add('open');
+}
+function closeConfirm() { document.getElementById('confirmOverlay').classList.remove('open'); confirmCallback = null; }
+document.getElementById('confirmOkBtn').addEventListener('click', () => {
+  closeConfirm(); if (confirmCallback) confirmCallback();
+});
+
+// Close modals on outside click
+document.getElementById('projectModal').addEventListener('click', e => { if(e.target === e.currentTarget) closeProjectModal(); });
+document.getElementById('founderModal').addEventListener('click', e => { if(e.target === e.currentTarget) closeFounderModal(); });
+document.getElementById('confirmOverlay').addEventListener('click', e => { if(e.target === e.currentTarget) closeConfirm(); });
+</script>
+</body>
+</html>
