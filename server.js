@@ -255,11 +255,15 @@ function renderProjectCard(p, i) {
   const seriesHtml = p.seriesLabel
     ? `<div class="meta-item"><strong>${p.seriesLabel.split('—')[0].trim()}</strong>Series</div>` : '';
   const descHtml = p.description ? `<div class="project-card-desc">${p.description}</div>` : '';
+  const eyeBtn = p.image
+    ? `<button class="project-eye-btn" data-img="${p.image}" data-title="${p.name}" aria-label="View full image">👁</button>`
+    : '';
   return `
   <div class="project-card fade-in" data-type="${p.city}">
     <div class="project-card-img">
       <div class="project-card-img-bg" style="background:${gradients[i % gradients.length]}">${imgHtml}</div>
       <div class="project-card-status ${statusClass}">${statusLabel}</div>
+      ${eyeBtn}
     </div>
     <div class="project-card-body">
       <div class="project-card-location">📍 ${p.location}</div>
