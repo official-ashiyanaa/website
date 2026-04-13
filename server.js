@@ -259,7 +259,7 @@ function renderProjectCard(p, i) {
     ? `<button class="project-eye-btn" data-img="${p.image}" data-title="${p.name}" aria-label="View full image">👁</button>`
     : '';
   return `
-  <div class="project-card fade-in" data-type="${p.city}">
+  <div class="project-card fade-in" data-type="${p.city}" data-status="${p.status}">
     <div class="project-card-img">
       <div class="project-card-img-bg" style="background:${gradients[i % gradients.length]}">${imgHtml}</div>
       <div class="project-card-status ${statusClass}">${statusLabel}</div>

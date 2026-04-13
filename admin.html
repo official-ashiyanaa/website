@@ -275,6 +275,61 @@
     /* ── Img thumb ── */
     .img-thumb { width: 40px; height: 40px; border-radius: 8px; object-fit: cover; border: 1px solid var(--border); }
     .img-placeholder { width: 40px; height: 40px; border-radius: 8px; background: var(--surface3); display: flex; align-items: center; justify-content: center; font-size: 18px; }
+    /* ── Status Radio Buttons ── */
+    .radio-group {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .radio-option {
+      position: relative;
+    }
+    .radio-option input[type="radio"] {
+      position: absolute;
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+    .radio-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 9px 16px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--surface2);
+      color: var(--muted2);
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+      user-select: none;
+    }
+    .radio-label::before {
+      content: '';
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--muted);
+      flex-shrink: 0;
+      transition: background 0.2s;
+    }
+    .radio-option input[type="radio"]:checked + .radio-label { font-weight: 600; }
+    /* Ongoing */
+    .radio-option.radio-ongoing  input[type="radio"]:checked + .radio-label {
+      background: rgba(26,138,122,.15); border-color: rgba(26,138,122,.5); color: #4DD8D8;
+    }
+    .radio-option.radio-ongoing  input[type="radio"]:checked + .radio-label::before { background: #1A8A7A; }
+    /* Completed */
+    .radio-option.radio-completed input[type="radio"]:checked + .radio-label {
+      background: rgba(34,197,94,.12); border-color: rgba(34,197,94,.4); color: #22c55e;
+    }
+    .radio-option.radio-completed input[type="radio"]:checked + .radio-label::before { background: #22c55e; }
+    /* Upcoming */
+    .radio-option.radio-upcoming  input[type="radio"]:checked + .radio-label {
+      background: rgba(59,130,246,.12); border-color: rgba(59,130,246,.4); color: #60a5fa;
+    }
+    .radio-option.radio-upcoming  input[type="radio"]:checked + .radio-label::before { background: #60a5fa; }
   </style>
 </head>
 <body>
@@ -441,11 +496,20 @@
     <div class="form-row">
       <div class="form-field">
         <label>Status</label>
-        <select id="pStatus">
-          <option value="ongoing">Ongoing</option>
-          <option value="completed">Completed</option>
-          <option value="upcoming">Upcoming</option>
-        </select>
+        <div class="radio-group" id="pStatusGroup">
+          <div class="radio-option radio-ongoing">
+            <input type="radio" name="pStatus" id="pStatus-ongoing" value="ongoing">
+            <label class="radio-label" for="pStatus-ongoing">🔨 Ongoing</label>
+          </div>
+          <div class="radio-option radio-completed">
+            <input type="radio" name="pStatus" id="pStatus-completed" value="completed">
+            <label class="radio-label" for="pStatus-completed">✅ Completed</label>
+          </div>
+          <div class="radio-option radio-upcoming">
+            <input type="radio" name="pStatus" id="pStatus-upcoming" value="upcoming">
+            <label class="radio-label" for="pStatus-upcoming">🔜 Upcoming</label>
+          </div>
+        </div>
       </div>
       <div class="form-field">
         <label>Completion % (0–100)</label>
@@ -682,7 +746,11 @@ function openProjectModal(project=null) {
   document.getElementById('pLocation').value = project?.location || '';
   document.getElementById('pCity').value = project?.city || 'nagaon';
   document.getElementById('pType').value = project?.type || 'residential';
-  document.getElementById('pStatus').value = project?.status || 'ongoing';
+  // Set status radio
+  const statusVal = project?.status || 'ongoing';
+  document.querySelectorAll('input[name="pStatus"]').forEach(r => {
+    r.checked = r.value === statusVal;
+  });
   document.getElementById('pPercent').value = project?.completionPercent ?? '';
   document.getElementById('pSeries').value = project?.seriesLabel || '';
   document.getElementById('pOrder').value = project?.displayOrder ?? '';
@@ -711,7 +779,7 @@ async function saveProject() {
     location: document.getElementById('pLocation').value.trim(),
     city: document.getElementById('pCity').value,
     type: document.getElementById('pType').value,
-    status: document.getElementById('pStatus').value,
+    status: (document.querySelector('input[name="pStatus"]:checked') || {value:'ongoing'}).value,
     completionPercent: document.getElementById('pPercent').value ? +document.getElementById('pPercent').value : null,
     seriesLabel: document.getElementById('pSeries').value.trim(),
     displayOrder: document.getElementById('pOrder').value ? +document.getElementById('pOrder').value : 0,
