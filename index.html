@@ -856,46 +856,83 @@
             color: var(--cream);
         }
 
+        /* ─── PROJECT GALLERY GRID ─── */
         .projects-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
-            gap: 24px;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
             max-width: 1200px;
             margin: 0 auto;
         }
 
         .project-card {
-            border-radius: 14px;
+            border-radius: 16px;
             overflow: hidden;
             background: var(--navy3);
             border: 1px solid rgba(201, 168, 76, .06);
-            transition: all .4s;
+            transition: all .4s cubic-bezier(.25,.8,.25,1);
             cursor: pointer;
+            display: flex;
+            flex-direction: column;
         }
 
         .project-card:hover {
-            transform: translateY(-6px);
-            border-color: rgba(201, 168, 76, .2);
-            box-shadow: 0 28px 70px rgba(0, 0, 0, .4);
+            transform: translateY(-8px);
+            border-color: rgba(201, 168, 76, .3);
+            box-shadow: 0 32px 80px rgba(0, 0, 0, .55), 0 0 0 1px rgba(201, 168, 76, .12);
         }
 
+        /* Image area — taller to show full portrait building photos */
         .project-card-img {
-            aspect-ratio: 16/10;
             position: relative;
             overflow: hidden;
+            aspect-ratio: 3/4;
+            flex-shrink: 0;
         }
 
         .project-card-img-bg {
             width: 100%;
             height: 100%;
-            transition: transform .6s;
+            transition: transform .7s cubic-bezier(.25,.8,.25,1);
             display: flex;
             align-items: center;
             justify-content: center;
         }
 
+        .project-card-img-bg img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center top;
+        }
+
         .project-card:hover .project-card-img-bg {
-            transform: scale(1.05);
+            transform: scale(1.06);
+        }
+
+        /* Gradient overlay on image bottom */
+        .project-card-img::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(
+                to top,
+                rgba(11, 17, 32, .92) 0%,
+                rgba(11, 17, 32, .4) 40%,
+                transparent 70%
+            );
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        /* Inline info floated inside the image bottom */
+        .project-card-img-info {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 16px 18px;
+            z-index: 2;
         }
 
         .project-card-status {
@@ -908,78 +945,95 @@
             font-weight: 600;
             letter-spacing: .06em;
             text-transform: uppercase;
+            z-index: 3;
+            backdrop-filter: blur(8px);
         }
 
         .status-ongoing {
-            background: rgba(26, 138, 122, .9);
-            color: #4DD8D8;
+            background: rgba(26, 138, 122, .85);
+            color: #7EFFF0;
         }
 
         .status-upcoming {
             background: rgba(201, 168, 76, .18);
             color: var(--gold);
-            border: 1px solid rgba(201, 168, 76, .35);
+            border: 1px solid rgba(201, 168, 76, .4);
         }
 
+        /* Card body below image */
         .project-card-body {
-            padding: 24px;
+            padding: 20px 20px 18px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
         }
 
         .project-card-location {
-            font-size: 11px;
-            letter-spacing: .08em;
+            font-size: 10px;
+            letter-spacing: .1em;
             text-transform: uppercase;
             color: var(--gold);
-            margin-bottom: 8px;
+            margin-bottom: 6px;
             display: flex;
             align-items: center;
-            gap: 5px;
+            gap: 4px;
+        }
+
+        /* Title shown inside the image overlay */
+        .project-card-title-overlay {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 22px;
+            font-weight: 700;
+            line-height: 1.1;
+            color: #fff;
+            text-shadow: 0 2px 12px rgba(0,0,0,.6);
         }
 
         .project-card-title {
             font-family: 'Cormorant Garamond', serif;
-            font-size: 24px;
+            font-size: 20px;
             font-weight: 700;
             line-height: 1.15;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
         }
 
         .project-card-desc {
-            font-size: 13px;
+            font-size: 12px;
             color: var(--muted);
             line-height: 1.6;
-            margin-bottom: 18px;
+            margin-bottom: 14px;
+            flex: 1;
         }
 
         .project-card-meta {
             display: flex;
-            gap: 18px;
+            gap: 14px;
             flex-wrap: wrap;
-            padding-top: 18px;
-            border-top: 1px solid rgba(201, 168, 76, .08);
+            padding-top: 14px;
+            border-top: 1px solid rgba(201, 168, 76, .1);
         }
 
         .meta-item {
-            font-size: 12px;
+            font-size: 11px;
             color: var(--muted);
         }
 
         .meta-item strong {
             display: block;
             color: var(--cream);
-            font-size: 13px;
-            margin-bottom: 2px;
+            font-size: 12px;
+            margin-bottom: 1px;
         }
 
         .project-card-link {
             display: inline-flex;
             align-items: center;
             gap: 8px;
-            font-size: 13px;
+            font-size: 12px;
             font-weight: 600;
             color: var(--gold);
             text-decoration: none;
-            margin-top: 16px;
+            margin-top: 14px;
             transition: gap .3s;
         }
 
@@ -1834,7 +1888,7 @@
             }
 
             .projects-grid {
-                grid-template-columns: 1fr;
+                grid-template-columns: 1fr 1fr;
             }
 
             .about-grid,
@@ -1861,6 +1915,11 @@
 
             footer {
                 padding: 36px 20px;
+            }
+        }
+        @media (max-width: 480px) {
+            .projects-grid {
+                grid-template-columns: 1fr;
             }
         }
         /* ─── LIGHTBOX ─── */
@@ -1955,40 +2014,43 @@
             z-index: 9001;
         }
 
-        /* Eye button on project card image */
-        .project-card-img {
-            position: relative;
-        }
-
         .nav-close {
             display: none;
         }
 
+        /* Eye / expand button on project card — sits in top-right corner of image */
         .project-eye-btn {
             position: absolute;
-            bottom: 12px;
-            right: 12px;
-            width: 38px;
-            height: 38px;
+            top: 14px;
+            right: 14px;
+            width: 36px;
+            height: 36px;
             border-radius: 50%;
-            background: rgba(11,17,32,.75);
-            border: 1px solid rgba(201,168,76,.4);
+            background: rgba(11,17,32,.7);
+            border: 1px solid rgba(201,168,76,.35);
             color: var(--gold);
-            font-size: 16px;
+            font-size: 15px;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
             opacity: 0;
-            transform: scale(.8);
-            transition: opacity .25s, transform .25s, background .2s;
+            transform: scale(.75);
+            transition: opacity .3s, transform .3s, background .2s;
             z-index: 5;
+            backdrop-filter: blur(6px);
         }
 
-        /* Show on card hover (wider trigger area) */
+        /* Show on card hover */
         .project-card:hover .project-eye-btn {
             opacity: 1;
             transform: scale(1);
+        }
+
+        .project-eye-btn:hover {
+            background: var(--gold);
+            color: #fff;
+            border-color: var(--gold);
         }
 
         /* Always visible on touch devices */
@@ -2024,7 +2086,7 @@
             <li><a href="#about">About</a></li>
             <li><a href="#projects">Projects</a></li>
             <li><a href="#services">Services</a></li>
-            <li><a href="#products">Products</a></li>
+            <!-- <li><a href="#products">Products</a></li> -->
             <li style="display: none;"><a href="/founders">Team</a></li>
             <li><a href="#contact" class="nav-cta">Enquire Now</a></li>
         </ul>
@@ -2764,7 +2826,8 @@
         </div>
     </section>
 
-    <!-- PRODUCT RANGE -->
+    <!-- PRODUCT RANGE — commented out per request -->
+    <div style="display:none" aria-hidden="true">
     <section style="background:var(--navy2);padding:80px 60px;" id="products">
         <div style="max-width:1100px;margin:0 auto;">
             <div class="fade-in" style="text-align:center;margin-bottom:50px;">
@@ -2893,6 +2956,7 @@
             </div>
         </div>
     </section>
+    </div><!-- end hidden products -->
 
     <!-- CONTACT -->
     <section class="contact" id="contact">

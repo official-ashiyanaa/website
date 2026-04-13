@@ -249,7 +249,7 @@ function renderProjectCard(p, i) {
   const statusClass = p.status === 'upcoming' ? 'status-upcoming' : 'status-ongoing';
   const cityIcons = { nagaon: '🏗️', lumding: '🏘️', hojai: '🏢' };
   const imgHtml = p.image
-    ? `<img src="${p.image}" alt="${p.name}" style="width:100%;height:100%;object-fit:cover;">`
+    ? `<img src="${p.image}" alt="${p.name}" style="width:100%;height:100%;object-fit:cover;object-position:center top;">`
     : `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:56px;opacity:0.25">${cityIcons[p.city] || '🏗️'}</div>`;
   const cityLabel = p.city.charAt(0).toUpperCase() + p.city.slice(1);
   const seriesHtml = p.seriesLabel
